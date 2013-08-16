@@ -60,33 +60,31 @@ class PandocGenerator < Generator
   end
 end
 
-module Converters
-  # Just return html5
-  class Markdown < Converter
-    def convert(content)
-      flags  = "#{@config['pandoc']['flags']} #{@config['pandoc']['site_flags']}"
+# Just return html5
+class MarkdownConverter < Converter
+  def convert(content)
+    flags  = "#{@config['pandoc']['flags']} #{@config['pandoc']['site_flags']}"
 
-      output = ''
-      Open3::popen3("pandoc -t html5 #{flags}") do |stdin, stdout, stderr|
-        stdin.puts content
-        stdin.close
+    output = ''
+    Open3::popen3("pandoc -t html5 #{flags}") do |stdin, stdout, stderr|
+      stdin.puts content
+      stdin.close
 
-        output = stdout.read.strip
-
-      end
-
-      output
+      output = stdout.read.strip
 
     end
 
-    def matches(ext)
-      rgx = '(' + @config['markdown_ext'].gsub(',','|') +')'
-      ext =~ Regexp.new(rgx, Regexp::IGNORECASE)
-    end
+    output
 
-    def output_ext(ext)
-      ".html"
-    end
+  end
+
+  def matches(ext)
+    rgx = '(' + @config['markdown_ext'].gsub(',','|') +')'
+    ext =~ Regexp.new(rgx, Regexp::IGNORECASE)
+  end
+
+  def output_ext(ext)
+    ".html"
   end
 end
 end
